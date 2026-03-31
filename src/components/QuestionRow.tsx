@@ -52,7 +52,7 @@ export function QuestionRow({ question, answers, onChange }: QuestionRowProps) {
       {question.type === 'select' && (
         <Select
           value={typeof value === 'string' ? value : ''}
-          onValueChange={(v) => onChange(question.id, v)}
+          onValueChange={(v) => v && onChange(question.id, v)}
         >
           <SelectTrigger className="w-52 text-xs">
             <SelectValue placeholder="Seleccionar..." />
