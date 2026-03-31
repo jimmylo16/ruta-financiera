@@ -23,28 +23,28 @@ export function QuestionRow({ question, answers, onChange }: QuestionRowProps) {
       <span className="text-sm text-gray-700 flex-1 leading-snug">{question.text}</span>
 
       {question.type === 'yes-no' && (
-        <div className="flex gap-2 shrink-0">
+        <div className="flex shrink-0 rounded-full border border-gray-200 overflow-hidden">
           <button
             type="button"
             onClick={() => onChange(question.id, true)}
-            className={`w-14 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            className={`w-14 py-1.5 text-xs font-semibold transition-all ${
               value === true
-                ? 'bg-[#048451] text-white shadow-sm'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                ? 'bg-[#048451] text-white'
+                : 'bg-white text-gray-400 hover:bg-gray-50'
             }`}
           >
-            SI
+            Sí
           </button>
           <button
             type="button"
             onClick={() => onChange(question.id, false)}
-            className={`w-14 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            className={`w-14 py-1.5 text-xs font-semibold transition-all border-l border-gray-200 ${
               value === false
-                ? 'bg-gray-600 text-white shadow-sm'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                ? 'bg-gray-700 text-white'
+                : 'bg-white text-gray-400 hover:bg-gray-50'
             }`}
           >
-            NO
+            No
           </button>
         </div>
       )}
