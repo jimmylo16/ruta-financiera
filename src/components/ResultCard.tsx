@@ -1,6 +1,7 @@
 'use client';
 
-import { Profile } from '@/types/quiz';
+import { useEffect } from 'react';
+import { Profile, Answers } from '@/types/quiz';
 
 const riskBadge: Record<string, { label: string; className: string }> = {
   bajo: { label: 'Riesgo Bajo', className: 'bg-green-100 text-green-800' },
@@ -11,10 +12,22 @@ const riskBadge: Record<string, { label: string; className: string }> = {
 
 interface ResultCardProps {
   profile: Profile;
+  answers: Answers;
+  score: number;
   onRestart: () => void;
 }
 
-export function ResultCard({ profile, onRestart }: ResultCardProps) {
+export function ResultCard({ profile, answers, score, onRestart }: ResultCardProps) {
+  useEffect(() => {
+    fetch('/api/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers, profileTitle: profile.title, score }),
+    }).catch(() => {
+      // Silently fail — no interrumpir la UX si el guardado falla
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const badge = riskBadge[profile.riskLevel];
 
   return (

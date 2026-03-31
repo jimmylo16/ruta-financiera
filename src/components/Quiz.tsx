@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Answers } from '@/types/quiz';
-import { getVisibleSections, calculateProfile } from '@/data/quiz';
+import { getVisibleSections, calculateProfile, calculateScore } from '@/data/quiz';
 import { SectionCard } from './SectionCard';
 import { ResultCard } from './ResultCard';
 import { ProgressBar } from './ProgressBar';
@@ -38,6 +38,7 @@ export function Quiz() {
   };
 
   const profile = showResult ? calculateProfile(answers) : null;
+  const score = showResult ? calculateScore(answers) : 0;
 
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
@@ -84,7 +85,7 @@ export function Quiz() {
 
       {/* Result */}
       {showResult && profile && (
-        <ResultCard profile={profile} onRestart={handleRestart} />
+        <ResultCard profile={profile} answers={answers} score={score} onRestart={handleRestart} />
       )}
     </div>
   );

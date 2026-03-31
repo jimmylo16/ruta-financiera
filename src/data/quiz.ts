@@ -126,11 +126,8 @@ export function getVisibleSections(answers: Answers): Section[] {
   return sections;
 }
 
-export function calculateProfile(answers: Answers): Profile {
-  if (!answers['tiene_tarjeta']) {
-    return profiles.find((p) => p.id === 'no-card')!;
-  }
-
+export function calculateScore(answers: Answers): number {
+  if (!answers['tiene_tarjeta']) return 0;
   let score = 0;
   if (answers['paga_total'] === true) score += 3;
   if (answers['sabe_interes'] === true) score += 2;
@@ -139,7 +136,14 @@ export function calculateProfile(answers: Answers): Profile {
   if (answers['avances'] === true) score -= 2;
   if (answers['atrasado'] === true) score -= 3;
   if (answers['compra_sin_poder'] === true) score -= 2;
+  return score;
+}
 
+export function calculateProfile(answers: Answers): Profile {
+  if (!answers['tiene_tarjeta']) {
+    return profiles.find((p) => p.id === 'no-card')!;
+  }
+  const score = calculateScore(answers);
   if (score >= 5) return profiles.find((p) => p.id === 'responsible')!;
   if (score >= 0) return profiles.find((p) => p.id === 'improving')!;
   return profiles.find((p) => p.id === 'risk')!;
