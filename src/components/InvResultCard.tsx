@@ -121,7 +121,15 @@ export function InvResultCard({ profile, score, answers, onRestart }: InvResultC
         )}
       </div>
 
-      <div className="px-8 pb-8 text-center">
+      <div className="px-8 pb-8 flex flex-col items-center gap-3 print:hidden">
+        <button
+          type="button"
+          onClick={() => window.print()}
+          className="px-6 py-2 rounded-full text-sm font-semibold text-white transition-all"
+          style={{ backgroundColor: profile.accentColor }}
+        >
+          Descargar PDF
+        </button>
         <button
           type="button"
           onClick={onRestart}
@@ -136,7 +144,7 @@ export function InvResultCard({ profile, score, answers, onRestart }: InvResultC
             (e.currentTarget as HTMLButtonElement).style.color = profile.accentColor;
           }}
         >
-          Volver a empezar
+          Volver al inicio
         </button>
       </div>
     </div>

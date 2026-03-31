@@ -28,8 +28,7 @@ export function InvestmentsQuiz({ onBack }: InvestmentsQuizProps) {
     else setCurrentStep((s) => s - 1);
   };
   const handleRestart = () => {
-    setCurrentStep(0);
-    setAnswers({});
+    onBack();
   };
 
   const score = showResult ? calculateInvScore(answers) : 0;
@@ -38,7 +37,7 @@ export function InvestmentsQuiz({ onBack }: InvestmentsQuizProps) {
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
       {/* Header */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 print:hidden">
         <div className="flex justify-center items-center gap-1.5 mb-4">
           <div className="h-7 w-2.5 rounded-sm bg-[#FFD050]" />
           <div className="h-7 w-2.5 rounded-sm bg-[#048451]" />
