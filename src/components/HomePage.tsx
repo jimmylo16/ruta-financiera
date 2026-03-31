@@ -3,14 +3,48 @@
 import { useState } from 'react';
 import { Quiz } from './Quiz';
 import { InvestmentsQuiz } from './InvestmentsQuiz';
+import { UserInfoForm } from './UserInfoForm';
+import { UserInfo } from '@/types/common';
 
 type ActiveQuiz = 'cards' | 'investments' | null;
 
 export function HomePage() {
   const [active, setActive] = useState<ActiveQuiz>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
-  if (active === 'cards') return <Quiz onBack={() => setActive(null)} />;
-  if (active === 'investments') return <InvestmentsQuiz onBack={() => setActive(null)} />;
+  const handleBack = () => {
+    setActive(null);
+    setUserInfo(null);
+  };
+
+  if (active && !userInfo) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-10">
+        <div className="text-center mb-8">
+          <div className="flex justify-center items-center gap-1.5 mb-4">
+            <div className="h-7 w-2.5 rounded-sm bg-[#FFD050]" />
+            <div className="h-7 w-2.5 rounded-sm bg-[#048451]" />
+            <span className="ml-2 text-lg font-bold text-gray-800 tracking-tight">Seguros Bolívar</span>
+          </div>
+          <h1 className="text-xl font-semibold text-gray-800 mb-1">Mi Ruta Financiera</h1>
+        </div>
+        <UserInfoForm
+          quizLabel={active === 'cards' ? 'Tarjetas de Crédito' : 'Inversiones'}
+          accentColor={active === 'cards' ? '#048451' : '#7c3aed'}
+          onSubmit={setUserInfo}
+          onBack={handleBack}
+        />
+      </div>
+    );
+  }
+
+  if (active === 'cards' && userInfo) {
+    return <Quiz onBack={handleBack} userInfo={userInfo} />;
+  }
+
+  if (active === 'investments' && userInfo) {
+    return <InvestmentsQuiz onBack={handleBack} userInfo={userInfo} />;
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">

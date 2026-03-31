@@ -2,15 +2,17 @@
 
 import { useEffect } from 'react';
 import { InvProfile, InvAnswers } from '@/types/investments';
+import { UserInfo } from '@/types/common';
 
 interface InvResultCardProps {
   profile: InvProfile;
   score: number;
   answers: InvAnswers;
+  userInfo: UserInfo;
   onRestart: () => void;
 }
 
-export function InvResultCard({ profile, score, answers, onRestart }: InvResultCardProps) {
+export function InvResultCard({ profile, score, answers, userInfo, onRestart }: InvResultCardProps) {
   const pct = Math.round((score / 22) * 100);
 
   useEffect(() => {
@@ -22,6 +24,7 @@ export function InvResultCard({ profile, score, answers, onRestart }: InvResultC
         answers,
         profileTitle: profile.title,
         score,
+        userInfo,
       }),
     }).catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps

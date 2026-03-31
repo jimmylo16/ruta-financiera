@@ -14,9 +14,16 @@ async function selectOption(page: Page, placeholder: string, option: string) {
   await page.getByRole('option', { name: option }).click();
 }
 
+async function fillUserInfo(page: Page) {
+  await page.getByPlaceholder('ejemplo@empresa.com').fill('test@empresa.com');
+  await page.getByPlaceholder('900123456-1').fill('900123456-1');
+  await page.getByRole('button', { name: 'Continuar →' }).click();
+}
+
 async function goToQuiz(page: Page, tipo: 'Tarjetas de Crédito' | 'Inversiones') {
   await page.goto(BASE_URL);
   await page.getByRole('button', { name: 'Empezar →' }).nth(tipo === 'Tarjetas de Crédito' ? 0 : 1).click();
+  await fillUserInfo(page);
 }
 
 async function clickNext(page: Page, isLast: false | 'perfil' | 'resultado' = false) {
@@ -34,6 +41,26 @@ test('landing page muestra ambos quizzes', async ({ page }) => {
   await expect(page.getByText('Tarjetas de Crédito')).toBeVisible();
   await expect(page.getByText('Inversiones')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Empezar →' })).toHaveCount(2);
+});
+
+test('user info: muestra form al hacer clic en Empezar y valida campos', async ({ page }) => {
+  await page.goto(BASE_URL);
+  await page.getByRole('button', { name: 'Empezar →' }).first().click();
+  await expect(page.getByText('Antes de empezar')).toBeVisible();
+
+  // Sin datos → no avanza
+  await page.getByRole('button', { name: 'Continuar →' }).click();
+  await expect(page.getByText('El correo es requerido')).toBeVisible();
+  await expect(page.getByText('El NIT es requerido')).toBeVisible();
+
+  // Email inválido
+  await page.getByPlaceholder('ejemplo@empresa.com').fill('no-es-email');
+  await page.getByRole('button', { name: 'Continuar →' }).click();
+  await expect(page.getByText('Ingresa un correo válido')).toBeVisible();
+
+  // Volver regresa al landing
+  await page.getByRole('button', { name: '← Volver' }).click();
+  await expect(page.getByText('Selecciona el cuestionario')).toBeVisible();
 });
 
 // ─── Quiz Tarjetas ───────────────────────────────────────────────────────────
@@ -73,18 +100,11 @@ test('tarjetas: flujo completo con tarjeta → resultado Saludable', async ({ pa
   await expect(page.getByText('Volver al inicio')).toBeVisible();
 });
 
-test('tarjetas: flujo sin tarjeta → resultado Sin Tarjeta', async ({ page }) => {
+test('tarjetas: flujo sin tarjeta → resultado inmediato Sin Tarjeta', async ({ page }) => {
   await goToQuiz(page, 'Tarjetas de Crédito');
 
-  // PERFIL — no tiene tarjeta
+  // PERFIL — no tiene tarjeta → resultado inmediato al avanzar
   await clickSegment(page, '¿Tienes tarjeta de crédito?', 'No');
-  await clickNext(page);
-
-  // CONTROL FINANCIERO (HÁBITOS se omite)
-  await expect(page.getByRole('heading', { name: /HÁBITOS/ })).not.toBeVisible();
-  await clickSegment(page, '¿Sabes cuánto pagas de interés?', 'No');
-  await clickSegment(page, '¿Llevas control de tus gastos?', 'No');
-  await clickSegment(page, '¿Compras cosas que no puedes pagar inmediatamente?', 'Sí');
   await clickNext(page, 'perfil');
 
   await expect(page.getByText('SIN TARJETA', { exact: true })).toBeVisible();
@@ -239,6 +259,7 @@ test('API /submit responde ok para tarjetas', async ({ request }) => {
       quizType: 'tarjetas',
       profileTitle: 'Test',
       score: 3,
+      userInfo: { email: 'test@test.com', nit: '900123456-1' },
       answers: {
         tiene_tarjeta: true,
         uso_principal: 'Compras del día a día',
@@ -269,6 +290,7 @@ test('API /submit responde ok para inversiones', async ({ request }) => {
       quizType: 'inversiones',
       profileTitle: 'Test',
       score: 18,
+      userInfo: { email: 'test@test.com', nit: '900123456-1' },
       answers: {
         fondo_emergencia: 'Sí',
         depende_credito: 'No',

@@ -239,11 +239,10 @@ export const profiles: Profile[] = [
 ];
 
 export function getVisibleSections(answers: Answers): Section[] {
-  const hasCard = answers['tiene_tarjeta'] === true;
-  if (!hasCard) {
-    return [sections[0], sections[2]]; // PERFIL + CONTROL (sin HÁBITOS)
+  if (answers['tiene_tarjeta'] === false) {
+    return [sections[0]]; // Sin tarjeta → solo PERFIL, resultado inmediato
   }
-  return sections;
+  return sections; // Con tarjeta → PERFIL + HÁBITOS + CONTROL
 }
 
 export function calculateScore(answers: Answers): number {

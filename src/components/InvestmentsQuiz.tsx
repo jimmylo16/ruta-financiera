@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { InvAnswers } from '@/types/investments';
+import { UserInfo } from '@/types/common';
 import { invBlocks, calculateInvScore, calculateInvProfile } from '@/data/investments';
 import { InvBlockCard } from './InvBlock';
 import { InvResultCard } from './InvResultCard';
@@ -9,9 +10,10 @@ import { ProgressBar } from './ProgressBar';
 
 interface InvestmentsQuizProps {
   onBack: () => void;
+  userInfo: UserInfo;
 }
 
-export function InvestmentsQuiz({ onBack }: InvestmentsQuizProps) {
+export function InvestmentsQuiz({ onBack, userInfo }: InvestmentsQuizProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<InvAnswers>({});
 
@@ -74,6 +76,7 @@ export function InvestmentsQuiz({ onBack }: InvestmentsQuizProps) {
           profile={profile}
           score={score}
           answers={answers}
+          userInfo={userInfo}
           onRestart={handleRestart}
         />
       )}

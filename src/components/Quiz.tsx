@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Answers } from '@/types/quiz';
+import { UserInfo } from '@/types/common';
 import { getVisibleSections, calculateProfile, calculateScore } from '@/data/quiz';
 import { SectionCard } from './SectionCard';
 import { ResultCard } from './ResultCard';
@@ -9,9 +10,10 @@ import { ProgressBar } from './ProgressBar';
 
 interface QuizProps {
   onBack: () => void;
+  userInfo: UserInfo;
 }
 
-export function Quiz({ onBack }: QuizProps) {
+export function Quiz({ onBack, userInfo }: QuizProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
 
@@ -91,7 +93,7 @@ export function Quiz({ onBack }: QuizProps) {
 
       {/* Result */}
       {showResult && profile && (
-        <ResultCard profile={profile} answers={answers} score={score} onRestart={handleRestart} />
+        <ResultCard profile={profile} answers={answers} score={score} userInfo={userInfo} onRestart={handleRestart} />
       )}
     </div>
   );

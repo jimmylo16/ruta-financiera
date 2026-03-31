@@ -23,10 +23,11 @@ async function callScript(scriptUrl: string, payload: object) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { quizType, profileTitle, score } = body as {
+    const { quizType, profileTitle, score, userInfo } = body as {
       quizType?: string;
       profileTitle: string;
       score: number;
+      userInfo?: { email: string; nit: string };
     };
 
     const scriptUrl = process.env.APPS_SCRIPT_URL;
@@ -41,6 +42,8 @@ export async function POST(req: NextRequest) {
       const payload = {
         quizType: 'inversiones',
         timestamp: new Date().toISOString(),
+        email: userInfo?.email ?? 'N/A',
+        nit: userInfo?.nit ?? 'N/A',
         fondo_emergencia: answers['fondo_emergencia'] ?? 'N/A',
         depende_credito: answers['depende_credito'] ?? 'N/A',
         puede_ahorrar: answers['puede_ahorrar'] ?? 'N/A',
@@ -61,6 +64,8 @@ export async function POST(req: NextRequest) {
       const payload = {
         quizType: 'tarjetas',
         timestamp: new Date().toISOString(),
+        email: userInfo?.email ?? 'N/A',
+        nit: userInfo?.nit ?? 'N/A',
         tiene_tarjeta: fmt(answers['tiene_tarjeta']),
         uso_principal: fmt(answers['uso_principal'], 'N/A'),
         paga_total: fmt(answers['paga_total'], 'N/A'),

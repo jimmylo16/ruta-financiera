@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { Profile, Answers } from '@/types/quiz';
+import { UserInfo } from '@/types/common';
 
 const riskBadge: Record<string, { label: string; className: string }> = {
   bajo: { label: 'SALUDABLE', className: 'bg-green-100 text-green-800' },
@@ -14,15 +15,16 @@ interface ResultCardProps {
   profile: Profile;
   answers: Answers;
   score: number;
+  userInfo: UserInfo;
   onRestart: () => void;
 }
 
-export function ResultCard({ profile, answers, score, onRestart }: ResultCardProps) {
+export function ResultCard({ profile, answers, score, userInfo, onRestart }: ResultCardProps) {
   useEffect(() => {
     fetch('/api/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ quizType: 'tarjetas', answers, profileTitle: profile.title, score }),
+      body: JSON.stringify({ quizType: 'tarjetas', answers, profileTitle: profile.title, score, userInfo }),
     }).catch(() => {
       // Silently fail — no interrumpir la UX si el guardado falla
     });
