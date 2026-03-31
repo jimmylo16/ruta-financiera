@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { google } from 'googleapis';
 import { Answers } from '@/types/quiz';
 
 function fmt(val: boolean | string | undefined, naLabel = 'N/A'): string {
@@ -17,38 +16,37 @@ export async function POST(req: NextRequest) {
       score: number;
     };
 
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      },
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
+    const scriptUrl = process.env.APPS_SCRIPT_URL;
+    if (!scriptUrl) {
+      console.error('[submit] APPS_SCRIPT_URL not configured');
+      return NextResponse.json({ ok: false }, { status: 500 });
+    }
 
-    const sheets = google.sheets({ version: 'v4', auth });
-    const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
-
-    const row = [
-      new Date().toISOString(),
-      fmt(answers['tiene_tarjeta']),
-      fmt(answers['uso_principal'], 'N/A'),
-      fmt(answers['paga_total'], 'N/A'),
-      fmt(answers['paga_minimo'], 'N/A'),
-      fmt(answers['avances'], 'N/A'),
-      fmt(answers['atrasado'], 'N/A'),
-      fmt(answers['sabe_interes']),
-      fmt(answers['control_gastos']),
-      fmt(answers['compra_sin_poder']),
+    const payload = {
+      timestamp: new Date().toISOString(),
+      tiene_tarjeta: fmt(answers['tiene_tarjeta']),
+      uso_principal: fmt(answers['uso_principal'], 'N/A'),
+      paga_total: fmt(answers['paga_total'], 'N/A'),
+      paga_minimo: fmt(answers['paga_minimo'], 'N/A'),
+      avances: fmt(answers['avances'], 'N/A'),
+      atrasado: fmt(answers['atrasado'], 'N/A'),
+      sabe_interes: fmt(answers['sabe_interes']),
+      control_gastos: fmt(answers['control_gastos']),
+      compra_sin_poder: fmt(answers['compra_sin_poder']),
       score,
-      profileTitle,
-    ];
+      profile: profileTitle,
+    };
 
-    await sheets.spreadsheets.values.append({
-      spreadsheetId,
-      range: 'A1',
-      valueInputOption: 'USER_ENTERED',
-      requestBody: { values: [row] },
+    const res = await fetch(scriptUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
     });
+
+    if (!res.ok) {
+      console.error('[submit] Apps Script error:', res.status);
+      return NextResponse.json({ ok: false }, { status: 500 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
