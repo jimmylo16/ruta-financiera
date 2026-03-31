@@ -26,7 +26,7 @@ export function InvQuestionRow({
   const color = accentColor[blockColor] ?? accentColor.green;
 
   return (
-    <div className="flex items-center justify-between py-3.5 border-b border-gray-100 last:border-0 gap-4">
+    <div data-question={question.text} className="flex items-center justify-between py-3.5 border-b border-gray-100 last:border-0 gap-4">
       <span className="text-sm text-gray-700 flex-1 leading-snug">{question.text}</span>
       <div className="flex shrink-0 rounded-full border border-gray-200 overflow-hidden">
         {question.options.map((opt, i) => (

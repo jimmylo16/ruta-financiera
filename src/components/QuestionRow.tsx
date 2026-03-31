@@ -19,7 +19,7 @@ export function QuestionRow({ question, answers, onChange }: QuestionRowProps) {
   const value = answers[question.id];
 
   return (
-    <div className="flex items-center justify-between py-3.5 border-b border-gray-100 last:border-0 gap-4">
+    <div data-question={question.text} className="flex items-center justify-between py-3.5 border-b border-gray-100 last:border-0 gap-4">
       <span className="text-sm text-gray-700 flex-1 leading-snug">{question.text}</span>
 
       {question.type === 'yes-no' && (
