@@ -18,8 +18,9 @@ export async function POST(req: NextRequest) {
 
     const scriptUrl = process.env.APPS_SCRIPT_URL;
     if (!scriptUrl) {
-      console.error('[submit] APPS_SCRIPT_URL not configured');
-      return NextResponse.json({ ok: false }, { status: 500 });
+      const reason = 'APPS_SCRIPT_URL no está configurada en las variables de entorno';
+      console.error('[submit]', reason);
+      return NextResponse.json({ ok: false, reason }, { status: 500 });
     }
 
     const payload = {
@@ -37,20 +38,27 @@ export async function POST(req: NextRequest) {
       profile: profileTitle,
     };
 
+    console.log('[submit] Enviando a Apps Script:', scriptUrl);
+
     const res = await fetch(scriptUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
+    const responseText = await res.text();
+    console.log('[submit] Respuesta Apps Script — status:', res.status, 'body:', responseText);
+
     if (!res.ok) {
-      console.error('[submit] Apps Script error:', res.status);
-      return NextResponse.json({ ok: false }, { status: 500 });
+      const reason = `Apps Script devolvió status ${res.status}: ${responseText}`;
+      console.error('[submit]', reason);
+      return NextResponse.json({ ok: false, reason }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error('[submit] Error:', err);
-    return NextResponse.json({ ok: false }, { status: 500 });
+    const reason = err instanceof Error ? err.message : String(err);
+    console.error('[submit] Error inesperado:', reason);
+    return NextResponse.json({ ok: false, reason }, { status: 500 });
   }
 }
