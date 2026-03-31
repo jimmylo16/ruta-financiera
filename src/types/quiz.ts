@@ -22,13 +22,19 @@ export interface Section {
 
 export type RiskLevel = 'bajo' | 'medio' | 'alto' | 'sin-historial';
 
+export interface RecommendationSection {
+  title: string;
+  items: string[];
+}
+
 export interface Profile {
   id: string;
   title: string;
   icon: string;
   description: string;
   riskLevel: RiskLevel;
-  recommendations: string[];
+  implications: string[];
+  recommendations: RecommendationSection[];
   accentColor: string;
 }
 
