@@ -14,9 +14,6 @@ export function InvResultCard({ profile, score, answers, onRestart }: InvResultC
   const pct = Math.round((score / 22) * 100);
 
   useEffect(() => {
-    const scriptUrl = process.env.NEXT_PUBLIC_APPS_SCRIPT_URL;
-    if (!scriptUrl) return;
-
     fetch('/api/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
