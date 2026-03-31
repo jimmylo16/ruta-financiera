@@ -22,7 +22,7 @@ export function ResultCard({ profile, answers, score, onRestart }: ResultCardPro
     fetch('/api/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ answers, profileTitle: profile.title, score }),
+      body: JSON.stringify({ quizType: 'tarjetas', answers, profileTitle: profile.title, score }),
     }).catch(() => {
       // Silently fail — no interrumpir la UX si el guardado falla
     });

@@ -7,7 +7,11 @@ import { SectionCard } from './SectionCard';
 import { ResultCard } from './ResultCard';
 import { ProgressBar } from './ProgressBar';
 
-export function Quiz() {
+interface QuizProps {
+  onBack: () => void;
+}
+
+export function Quiz({ onBack }: QuizProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
 
@@ -31,7 +35,10 @@ export function Quiz() {
   };
 
   const handleNext = () => setCurrentStep((s) => s + 1);
-  const handleBack = () => setCurrentStep((s) => s - 1);
+  const handleBack = () => {
+    if (currentStep === 0) onBack();
+    else setCurrentStep((s) => s - 1);
+  };
   const handleRestart = () => {
     setCurrentStep(0);
     setAnswers({});
@@ -78,7 +85,7 @@ export function Quiz() {
           answers={answers}
           onChange={handleChange}
           onNext={handleNext}
-          onBack={currentStep > 0 ? handleBack : undefined}
+          onBack={handleBack}
           isLast={isLastSection}
         />
       )}
